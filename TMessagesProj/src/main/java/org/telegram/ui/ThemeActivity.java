@@ -62,6 +62,7 @@ import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
+import org.telegram.messenger.UiFontManager;
 import org.telegram.messenger.Utilities;
 import org.telegram.messenger.time.SunDate;
 import org.telegram.tgnet.TLRPC;
@@ -151,6 +152,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
     private int textSizeHeaderRow;
     @Keep
     private int textSizeRow;
+    private int fontFamilyRow;
     private int settingsRow;
     private int directShareRow;
     @Keep
@@ -580,6 +582,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
         liteModeInfoRow = -1;
 
         textSizeRow = -1;
+        fontFamilyRow = -1;
         backgroundRow = -1;
         changeUserColor = -1;
         settingsRow = -1;
@@ -656,6 +659,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
         } else if (currentType == THEME_TYPE_BASIC) {
             textSizeHeaderRow = rowCount++;
             textSizeRow = rowCount++;
+            fontFamilyRow = rowCount++;
             backgroundRow = rowCount++;
             changeUserColor = rowCount++;
             newThemeInfoRow = rowCount++;
@@ -1114,6 +1118,52 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
                 if (view instanceof TextCheckCell) {
                     ((TextCheckCell) view).setChecked(!animations);
                 }
+            } else if (position == fontFamilyRow) {
+                Activity parentActivity = getParentActivity();
+                if (parentActivity == null) {
+                    return;
+                }
+                AtomicReference<Dialog> dialogRef = new AtomicReference<>();
+                LinearLayout linearLayout = new LinearLayout(context);
+                linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+                for (AndroidUtilities.UiFont font : AndroidUtilities.getUiFonts()) {
+                    RadioColorCell cell = new RadioColorCell(parentActivity);
+                    cell.setPadding(dp(4), 0, dp(4), 0);
+                    cell.setCheckColor(Theme.getColor(Theme.key_radioBackground), Theme.getColor(Theme.key_dialogRadioBackgroundChecked));
+                    cell.setTypeface(AndroidUtilities.getUiTypeface(font.id, false));
+                    cell.setTextAndText2AndValue(
+                            getString(font.nameResId),
+                            getString(R.string.FontPreviewPersian),
+                            font.id.equals(SharedConfig.uiFont));
+                    cell.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector), Theme.RIPPLE_MASK_ALL));
+                    linearLayout.addView(cell);
+                    cell.setOnClickListener(v -> {
+                        boolean changed = SharedConfig.setUiFont(font.id);
+                        Dialog dialog = dialogRef.get();
+                        if (dialog != null) {
+                            dialog.dismiss();
+                        }
+                        if (!changed) {
+                            return;
+                        }
+                        INavigationLayout navigationLayout = parentLayout;
+                        AndroidUtilities.runOnUIThread(() -> {
+                            UiFontManager.refreshAllActivities(parentActivity);
+                            if (navigationLayout != null) {
+                                navigationLayout.rebuildAllFragmentViews(true, true);
+                            }
+                        }, 80);
+                    });
+                }
+
+                Dialog dialog = new AlertDialog.Builder(parentActivity)
+                        .setTitle(getString(R.string.ChooseAppFont))
+                        .setView(linearLayout)
+                        .setNegativeButton(getString("Cancel", R.string.Cancel), null)
+                        .create();
+                dialogRef.set(dialog);
+                showDialog(dialog);
             } else if (position == backgroundRow) {
                 presentFragment(new WallpapersListActivity(WallpapersListActivity.TYPE_ALL));
             } else if (position == changeUserColor) {
@@ -2503,6 +2553,9 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
                         cell.setTextAndValue(getString("SortBy", R.string.SortBy), value, true);
                     } else if (position == contactsReimportRow) {
                         cell.setText(getString("ImportContacts", R.string.ImportContacts), true);
+                    } else if (position == fontFamilyRow) {
+                        AndroidUtilities.UiFont font = AndroidUtilities.getCurrentUiFont();
+                        cell.setTextAndValue(getString(R.string.AppFont), getString(font.nameResId), true);
                     } else if (position == distanceRow) {
                         String value;
                         if (SharedConfig.distanceSystemType == 0) {
@@ -2733,7 +2786,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
             if (position == scheduleFromRow || position == distanceRow ||
                     position == scheduleToRow || position == scheduleUpdateLocationRow ||
                     position == contactsReimportRow || position == contactsSortRow ||
-                    position == bluetoothScoRow || position == searchEngineRow) {
+                    position == bluetoothScoRow || position == searchEngineRow || position == fontFamilyRow) {
                 return TYPE_TEXT_SETTING;
             } else if (position == automaticBrightnessInfoRow || position == scheduleLocationInfoRow || position == swipeGestureInfoRow || position == stickersInfoRow || position == liteModeInfoRow) {
                 return TYPE_TEXT_INFO_PRIVACY;

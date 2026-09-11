@@ -7932,6 +7932,7 @@ public class Theme {
         dialogs_tagTextPaint.setTextSize(dp(10));
         dialogs_searchNamePaint.setTextSize(dp(16));
         dialogs_searchNameEncryptedPaint.setTextSize(dp(16));
+        applyUiFont();
     }
 
     public static void applyDialogsTheme() {
@@ -8016,6 +8017,92 @@ public class Theme {
         }
     }
 
+    private static void setUiTypeface(TextPaint paint, Typeface typeface) {
+        if (paint != null) {
+            paint.setTypeface(typeface);
+        }
+    }
+
+    private static void setUiTypeface(TextPaint[] paints, Typeface typeface) {
+        if (paints == null) {
+            return;
+        }
+        for (TextPaint paint : paints) {
+            setUiTypeface(paint, typeface);
+        }
+    }
+
+    /**
+     * Re-applies the user-selected interface font to shared paints. Dedicated
+     * code, mono and emoji paints are intentionally excluded.
+     */
+    public static void applyUiFont() {
+        synchronized (sync) {
+            Typeface regular = AndroidUtilities.getTypeface();
+            Typeface bold = AndroidUtilities.bold();
+
+            setUiTypeface(dialogs_namePaint, bold);
+            setUiTypeface(dialogs_nameEncryptedPaint, bold);
+            setUiTypeface(dialogs_searchNamePaint, bold);
+            setUiTypeface(dialogs_searchNameEncryptedPaint, bold);
+            setUiTypeface(dialogs_messageNamePaint, bold);
+            setUiTypeface(dialogs_timePaintBold, bold);
+            setUiTypeface(dialogs_timePaintBoldAccent, bold);
+            setUiTypeface(dialogs_countTextPaint, bold);
+            setUiTypeface(dialogs_countTextPaint2, bold);
+            setUiTypeface(dialogs_archiveTextPaint, bold);
+            setUiTypeface(dialogs_archiveTextPaintSmall, bold);
+            setUiTypeface(dialogs_tagTextPaint, bold);
+
+            setUiTypeface(dialogs_messagePaint, regular);
+            setUiTypeface(dialogs_messagePrintingPaint, regular);
+            setUiTypeface(dialogs_timePaint, regular);
+            setUiTypeface(dialogs_onlinePaint, regular);
+            setUiTypeface(dialogs_offlinePaint, regular);
+            setUiTypeface(profile_aboutTextPaint, regular);
+
+            setUiTypeface(chat_msgTextPaint, regular);
+            setUiTypeface(chat_msgGameTextPaint, regular);
+            setUiTypeface(chat_infoPaint, regular);
+            setUiTypeface(chat_locationAddressPaint, regular);
+            setUiTypeface(chat_durationPaint, regular);
+            setUiTypeface(chat_shipmentPaint, regular);
+            setUiTypeface(chat_audioTimePaint, regular);
+            setUiTypeface(chat_audioPerformerPaint, regular);
+            setUiTypeface(chat_contactPhonePaint, regular);
+            setUiTypeface(chat_timePaint, regular);
+            setUiTypeface(chat_adminPaint, regular);
+            setUiTypeface(chat_ephemeralPaint, regular);
+            setUiTypeface(chat_forwardNamePaint, regular);
+            setUiTypeface(chat_replyTextPaint, regular);
+            setUiTypeface(chat_quoteTextPaint, regular);
+            setUiTypeface(chat_explanationTextPaint, regular);
+            setUiTypeface(chat_titleLabelTextPaint, regular);
+            setUiTypeface(chat_contextResult_descriptionTextPaint, regular);
+
+            setUiTypeface(chat_actionTextPaint, bold);
+            setUiTypeface(chat_actionTextPaint2, bold);
+            setUiTypeface(chat_actionTextPaint3, bold);
+            setUiTypeface(chat_unlockExtendedMediaTextPaint, bold);
+            setUiTypeface(chat_msgBotButtonPaint, bold);
+            setUiTypeface(chat_infoBoldPaint, bold);
+            setUiTypeface(chat_stickerCommentCountPaint, bold);
+            setUiTypeface(chat_livePaint, bold);
+            setUiTypeface(chat_docNamePaint, bold);
+            setUiTypeface(chat_locationTitlePaint, bold);
+            setUiTypeface(chat_gamePaint, bold);
+            setUiTypeface(chat_instantViewPaint, bold);
+            setUiTypeface(chat_audioTitlePaint, bold);
+            setUiTypeface(chat_botButtonPaint, bold);
+            setUiTypeface(chat_contactNamePaint, bold);
+            setUiTypeface(chat_namePaint, bold);
+            setUiTypeface(chat_replyNamePaint, bold);
+            setUiTypeface(chat_topicTextPaint, bold);
+            setUiTypeface(chat_commentTextPaint, bold);
+            setUiTypeface(chat_contextResult_titleTextPaint, bold);
+        }
+    }
+
     public static void createCommonMessageResources() {
         synchronized (sync) {
             if (chat_msgTextPaint == null) {
@@ -8075,6 +8162,7 @@ public class Theme {
             chat_msgTextCodePaint.setTextSize(dp(Math.max(Math.min(10, SharedConfig.fontSize - 1), SharedConfig.fontSize - 2)));
             chat_msgTextCode2Paint.setTextSize(dp(Math.max(Math.min(10, SharedConfig.fontSize - 2), SharedConfig.fontSize - 3)));
             chat_msgTextCode3Paint.setTextSize(dp(Math.max(Math.min(10, SharedConfig.fontSize - 2), SharedConfig.fontSize - 5)));
+            applyUiFont();
         }
     }
 
@@ -8184,6 +8272,7 @@ public class Theme {
             addChatPaint(key_paint_chatComposeBackground, chat_composeBackgroundPaint, key_chat_messagePanelBackground);
             addChatPaint(key_paint_chatTimeBackground, chat_timeBackgroundPaint, key_chat_mediaTimeBackground);
         }
+        applyUiFont();
     }
 
     public static void createChatResources(Context context, boolean fontsOnly) {
@@ -8891,6 +8980,7 @@ public class Theme {
         }
 
         profile_aboutTextPaint.setTextSize(dp(16));
+        applyUiFont();
     }
 
     private static ColorFilter currentShareColorFilter;

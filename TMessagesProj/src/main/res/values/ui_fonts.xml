@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="MyTextViewStyle.Vazirmatn" parent="@style/MyTextViewStyle">
+        <item name="android:fontFamily">@font/vazirmatn</item>
+        <item name="fontFamily">@font/vazirmatn</item>
+    </style>
+
+    <style name="MyTextViewStyle.FarNazanin" parent="@style/MyTextViewStyle">
+        <item name="android:fontFamily">@font/far_nazanin</item>
+        <item name="fontFamily">@font/far_nazanin</item>
+    </style>
+
+    <style name="MyTextViewStyle.FarTitr" parent="@style/MyTextViewStyle">
+        <item name="android:fontFamily">@font/far_titr_bold</item>
+        <item name="fontFamily">@font/far_titr_bold</item>
+    </style>
+
+    <style name="UiFontOverlay.System">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle</item>
+    </style>
+
+    <style name="UiFontOverlay.Vazirmatn">
+        <item name="android:fontFamily">@font/vazirmatn</item>
+        <item name="fontFamily">@font/vazirmatn</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle.Vazirmatn</item>
+    </style>
+
+    <style name="UiFontOverlay.FarNazanin">
+        <item name="android:fontFamily">@font/far_nazanin</item>
+        <item name="fontFamily">@font/far_nazanin</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle.FarNazanin</item>
+    </style>
+
+    <style name="UiFontOverlay.FarTitr">
+        <item name="android:fontFamily">@font/far_titr_bold</item>
+        <item name="fontFamily">@font/far_titr_bold</item>
+        <item name="android:textViewStyle">@style/MyTextViewStyle.FarTitr</item>
+    </style>
+</resources>

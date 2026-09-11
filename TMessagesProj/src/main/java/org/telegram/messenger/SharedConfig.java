@@ -332,6 +332,7 @@ public class SharedConfig {
     public static boolean allowBigEmoji;
     public static boolean useSystemEmoji;
     public static boolean useSystemBoldFont;
+    public static String uiFont = AndroidUtilities.UI_FONT_SYSTEM;
     public static int fontSize = 16;
     public static boolean fontSizeIsDefault;
     public static int bubbleRadius = 17;
@@ -637,6 +638,8 @@ public class SharedConfig {
             allowBigEmoji = preferences.getBoolean("allowBigEmoji", true);
             useSystemEmoji = preferences.getBoolean("useSystemEmoji", false);
             useSystemBoldFont = preferences.getBoolean("useSystemBoldFont", false);
+            uiFont = AndroidUtilities.normalizeUiFont(preferences.getString("uiFont", AndroidUtilities.UI_FONT_SYSTEM));
+            AndroidUtilities.clearUiFontCache();
             forceForumTabs = preferences.getBoolean("forceForumTabs", false);
             fastWallpaperDisabled = preferences.getBoolean("fastWallpaperDisabled", false);
             frameMetricsEnabled = preferences.getBoolean("frameMetricsEnabled", false);
@@ -1173,6 +1176,19 @@ public class SharedConfig {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("useSystemBoldFont", useSystemBoldFont);
         editor.apply();
+    }
+
+    public static boolean setUiFont(String fontId) {
+        String normalizedFontId = AndroidUtilities.normalizeUiFont(fontId);
+        if (normalizedFontId.equals(uiFont)) {
+            return false;
+        }
+        uiFont = normalizedFontId;
+        AndroidUtilities.clearUiFontCache();
+        SharedPreferences.Editor editor = MessagesController.getGlobalMainSettings().edit();
+        editor.putString("uiFont", uiFont);
+        editor.apply();
+        return true;
     }
 
     public static void toggleForceForumTabs() {

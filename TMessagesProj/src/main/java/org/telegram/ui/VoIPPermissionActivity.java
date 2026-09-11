@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import org.telegram.messenger.FileLog;
+import org.telegram.messenger.ApplicationLoader;
+import org.telegram.messenger.UiFontManager;
 import org.telegram.messenger.voip.VoIPPreNotificationService;
 import org.telegram.messenger.voip.VoIPService;
 import org.telegram.ui.Components.voip.VoIPHelper;
@@ -18,6 +20,8 @@ import java.util.ArrayList;
 public class VoIPPermissionActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		ApplicationLoader.postInitApplication();
+		UiFontManager.applyToActivity(this);
 		super.onCreate(savedInstanceState);
 
 		final VoIPService service = VoIPService.getSharedInstance();

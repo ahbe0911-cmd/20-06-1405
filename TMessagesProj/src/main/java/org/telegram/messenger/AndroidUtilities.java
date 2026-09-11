@@ -253,19 +253,134 @@ public class AndroidUtilities {
     public final static String TYPEFACE_ROBOTO_MONO = "fonts/rmono.ttf";
     public final static String TYPEFACE_MERRIWEATHER_BOLD = "fonts/mw_bold.ttf";
 
+    public static final String UI_FONT_SYSTEM = "system";
+    public static final String UI_FONT_VAZIRMATN = "vazirmatn";
+    public static final String UI_FONT_FAR_NAZANIN = "far_nazanin";
+    public static final String UI_FONT_FAR_TITR = "far_titr";
+
+    public static final class UiFont {
+        public final String id;
+        public final int nameResId;
+        public final String regularAssetPath;
+        public final String boldAssetPath;
+        public final int themeOverlayResId;
+
+        private UiFont(String id, int nameResId, String regularAssetPath, String boldAssetPath, int themeOverlayResId) {
+            this.id = id;
+            this.nameResId = nameResId;
+            this.regularAssetPath = regularAssetPath;
+            this.boldAssetPath = boldAssetPath;
+            this.themeOverlayResId = themeOverlayResId;
+        }
+    }
+
+    private static final List<UiFont> uiFonts;
+
+    static {
+        ArrayList<UiFont> fonts = new ArrayList<>();
+        fonts.add(new UiFont(UI_FONT_SYSTEM, R.string.FontSystemDefault, null, null, R.style.UiFontOverlay_System));
+        fonts.add(new UiFont(UI_FONT_VAZIRMATN, R.string.FontVazirmatn,
+                "fonts/vazirmatn_regular.ttf", "fonts/vazirmatn_bold.ttf", R.style.UiFontOverlay_Vazirmatn));
+        fonts.add(new UiFont(UI_FONT_FAR_NAZANIN, R.string.FontFarNazanin,
+                "fonts/far_nazanin.ttf", null, R.style.UiFontOverlay_FarNazanin));
+        fonts.add(new UiFont(UI_FONT_FAR_TITR, R.string.FontFarTitr,
+                "fonts/far_titr_bold.ttf", "fonts/far_titr_bold.ttf", R.style.UiFontOverlay_FarTitr));
+        uiFonts = Collections.unmodifiableList(fonts);
+    }
+
     public static Typeface mediumTypeface;
     public static ThreadLocal<byte[]> readBufferLocal = new ThreadLocal<>();
     public static ThreadLocal<byte[]> bufferLocal = new ThreadLocal<>();
 
     public static Typeface bold() {
         if (mediumTypeface == null) {
-            if (SharedConfig.useSystemBoldFont && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            UiFont uiFont = getCurrentUiFont();
+            if (!UI_FONT_SYSTEM.equals(uiFont.id)) {
+                mediumTypeface = getUiTypeface(uiFont.id, true);
+            } else if (SharedConfig.useSystemBoldFont && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 mediumTypeface = Typeface.create(null, 500, false);
             } else {
                 mediumTypeface = getTypeface(TYPEFACE_ROBOTO_MEDIUM);
             }
         }
         return mediumTypeface;
+    }
+
+    public static List<UiFont> getUiFonts() {
+        return uiFonts;
+    }
+
+    public static String normalizeUiFont(String fontId) {
+        if (fontId != null) {
+            for (UiFont font : uiFonts) {
+                if (font.id.equals(fontId)) {
+                    return font.id;
+                }
+            }
+        }
+        return UI_FONT_SYSTEM;
+    }
+
+    public static UiFont getUiFont(String fontId) {
+        String normalizedId = normalizeUiFont(fontId);
+        for (UiFont font : uiFonts) {
+            if (font.id.equals(normalizedId)) {
+                return font;
+            }
+        }
+        return uiFonts.get(0);
+    }
+
+    public static UiFont getCurrentUiFont() {
+        return getUiFont(SharedConfig.uiFont);
+    }
+
+    public static Typeface getTypeface() {
+        return getUiTypeface(false);
+    }
+
+    public static Typeface getUiTypeface(boolean bold) {
+        UiFont font = getCurrentUiFont();
+        if (UI_FONT_SYSTEM.equals(font.id)) {
+            return bold ? bold() : Typeface.DEFAULT;
+        }
+        return getUiTypeface(font.id, bold);
+    }
+
+    public static Typeface getUiTypeface(String fontId, boolean bold) {
+        UiFont font = getUiFont(fontId);
+        if (UI_FONT_SYSTEM.equals(font.id)) {
+            return bold ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT;
+        }
+        String assetPath = bold && font.boldAssetPath != null ? font.boldAssetPath : font.regularAssetPath;
+        Typeface typeface = getTypeface(assetPath);
+        if (typeface == null) {
+            return bold ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT;
+        }
+        if (bold && font.boldAssetPath == null) {
+            return Typeface.create(typeface, Typeface.BOLD);
+        }
+        return typeface;
+    }
+
+    public static TextPaint createTextPaint(int flags) {
+        TextPaint paint = new TextPaint(flags);
+        paint.setTypeface(getTypeface());
+        return paint;
+    }
+
+    public static void applyUiFontTheme(Activity activity) {
+        if (activity == null) {
+            return;
+        }
+        int overlay = getCurrentUiFont().themeOverlayResId;
+        if (overlay != 0) {
+            activity.getTheme().applyStyle(overlay, true);
+        }
+    }
+
+    public static void clearUiFontCache() {
+        mediumTypeface = null;
     }
 
     private static final Hashtable<String, Typeface> typefaceCache = new Hashtable<>();

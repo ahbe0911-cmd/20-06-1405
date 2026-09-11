@@ -9,6 +9,7 @@
 package org.telegram.ui.Cells;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -94,6 +95,11 @@ public class RadioColorCell extends FrameLayout {
 
     public void setChecked(boolean checked, boolean animated) {
         radioButton.setChecked(checked, animated);
+    }
+
+    public void setTypeface(Typeface typeface) {
+        textView.setTypeface(typeface);
+        text2View.setTypeface(typeface);
     }
 
     public boolean isChecked() {

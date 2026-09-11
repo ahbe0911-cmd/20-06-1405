@@ -34,6 +34,7 @@ import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
+import org.telegram.messenger.UiFontManager;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.forkgram.HiddenAccountHelper;
 import org.telegram.tgnet.ConnectionsManager;
@@ -77,6 +78,7 @@ public class ExternalActionActivity extends Activity implements INavigationLayou
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setTheme(R.style.Theme_TMessages);
+        UiFontManager.applyToActivity(this);
         getWindow().setBackgroundDrawable(new ActivityWindowEmptyBackgroundDrawable());
         if (!SharedConfig.passcodeHash.isEmpty() && !SharedConfig.allowScreenCapture) {
             try {

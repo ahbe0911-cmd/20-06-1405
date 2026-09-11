@@ -4,11 +4,15 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import org.telegram.messenger.ApplicationLoader;
+import org.telegram.messenger.UiFontManager;
 import org.telegram.ui.Components.voip.VoIPHelper;
 
 public class VoIPFeedbackActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		ApplicationLoader.postInitApplication();
+		UiFontManager.applyToActivity(this);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
 		super.onCreate(savedInstanceState);
 

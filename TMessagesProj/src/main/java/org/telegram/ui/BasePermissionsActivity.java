@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
 
 import androidx.annotation.RawRes;
 import androidx.fragment.app.FragmentActivity;
@@ -18,6 +19,7 @@ import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
+import org.telegram.messenger.UiFontManager;
 import org.telegram.messenger.camera.CameraController;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.Theme;
@@ -36,6 +38,12 @@ public class BasePermissionsActivity extends FragmentActivity {
             REQUEST_CODE_MEDIA_GEO = 211;
 
     protected int currentAccount = -1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        UiFontManager.applyToActivity(this);
+        super.onCreate(savedInstanceState);
+    }
 
     protected boolean checkPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (grantResults == null) {

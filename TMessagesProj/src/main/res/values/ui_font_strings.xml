@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="AppFont">App font</string>
+    <string name="ChooseAppFont">Choose app font</string>
+    <string name="FontSystemDefault">System default</string>
+    <string name="FontVazirmatn">Vazirmatn</string>
+    <string name="FontFarNazanin">Nazanin</string>
+    <string name="FontFarTitr">Titr Bold (display)</string>
+    <string name="FontPreviewPersian">سلام؛ این یک پیش‌نمایش فونت فارسی است.</string>
+</resources>

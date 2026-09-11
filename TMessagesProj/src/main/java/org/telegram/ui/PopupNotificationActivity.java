@@ -50,6 +50,7 @@ import org.telegram.messenger.NotificationsController;
 import org.telegram.messenger.SendMessagesHelper;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
+import org.telegram.messenger.UiFontManager;
 import org.telegram.messenger.UserObject;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLoader;
@@ -160,6 +161,8 @@ public class PopupNotificationActivity extends Activity implements NotificationC
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ApplicationLoader.postInitApplication();
+        UiFontManager.applyToActivity(this);
         super.onCreate(savedInstanceState);
         Theme.createDialogsResources(this);
         Theme.createChatResources(this, false);
