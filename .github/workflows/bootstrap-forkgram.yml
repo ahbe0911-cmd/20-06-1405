@@ -1,0 +1,38 @@
+name: Bootstrap Forkgram Source
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    if: github.event.head_commit.message == 'Import Forkgram source without workflows'
+    name: Import upstream source
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone and publish Forkgram
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_REPOSITORY: ${{ github.repository }}
+        run: |
+          git clone --depth 1 --branch dev --single-branch https://github.com/forkgram/TelegramAndroid.git source
+          rm -rf source/.github/workflows
+          mkdir -p source/.github/workflows
+          curl -fsSL \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github.raw+json" \
+            "https://api.github.com/repos/${TARGET_REPOSITORY}/contents/.github/workflows/bootstrap-forkgram.yml?ref=main" \
+            -o source/.github/workflows/bootstrap-forkgram.yml
+          cd source
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan import-main
+          git add -A
+          git commit -m "Import Forkgram source [skip ci]"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${TARGET_REPOSITORY}.git"
+          git push --force --no-thin origin HEAD:main
